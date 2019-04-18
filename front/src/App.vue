@@ -20,8 +20,8 @@
           v-card-text
             v-form
               v-text-field(label="タイトル", required)
-              v-select(:items="authorItems", label="著者")
-              v-select(:items="publisherItems", label="出版社")
+              v-autocomplete(:items="authorItems", label="著者")
+              v-autocomplete(:items="publisherItems", label="出版社")
               v-btn(color="info") 登録
 
       v-dialog.update-dialog(v-model="updateDialog", max-width=500)
@@ -30,10 +30,11 @@
           v-card-text
             v-form
               v-text-field(label="タイトル", required, :value="selectedBook.title")
-              v-select(:items="authorItems" label="著者", v-model="selectedBook.author.id")
-              v-select(:items="publisherItems", label="出版社", v-model="selectedBook.publisher.id")
+              v-autocomplete(:items="authorItems" label="著者", v-model="selectedBook.author.id")
+              v-autocomplete(:items="publisherItems", label="出版社", v-model="selectedBook.publisher.id")
               v-btn(color="info") 更新
               v-btn(color="error") 削除
+
       v-btn(color='pink', dark, fixed, bottom, right, fab, @click.stop="createDialog = true") +
 
 </template>
