@@ -19,7 +19,7 @@
           v-card-title.headline.grey.lighten-2 新規登録
           v-card-text
             v-form
-              v-text-field(label="タイトル", required)
+              v-text-field(label="タイトル", :counter="100", required)
               v-autocomplete(:items="authorItems", label="著者")
               v-autocomplete(:items="publisherItems", label="出版社")
               v-btn(color="info") 登録
@@ -29,7 +29,7 @@
           v-card-title.headline.grey.lighten-2 更新
           v-card-text
             v-form
-              v-text-field(label="タイトル", required, :value="selectedBook.title")
+              v-text-field(label="タイトル", required, :counter="100", :value="selectedBook.title")
               v-autocomplete(:items="authorItems" label="著者", v-model="selectedBook.author.id")
               v-autocomplete(:items="publisherItems", label="出版社", v-model="selectedBook.publisher.id")
               v-btn(color="info") 更新
