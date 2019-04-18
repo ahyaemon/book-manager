@@ -20,7 +20,7 @@
           v-card-text
             v-form
               v-text-field(label="タイトル", required)
-              v-select(:items="authors", label="著者")
+              v-select(:items="authors2", label="著者")
               v-select(:items="publishers", label="出版社")
               v-btn(color="info") 登録
 
@@ -30,8 +30,8 @@
           v-card-text
             v-form
               v-text-field(label="タイトル", required, :value="selectedBook.title")
-              v-select(:items="authors", label="著者", :value="selectedBook.author")
-              v-select(:items="publishers", label="出版社", :value="selectedBook.publisher")
+              v-select(:items="authors2" label="著者", :item-value="author")
+              v-select(:items="publishers", label="出版社", :value="selectedBook.publisher.name")
               v-btn(color="info") 更新
               v-btn(color="error") 削除
       v-btn(color='pink', dark, fixed, bottom, right, fab, @click.stop="createDialog = true") +
@@ -44,30 +44,44 @@
     interface Book {
       id: number,
       title: string,
-      author: string,
-      publisher: string,
+      author: Author,
+      publisher: Publisher,
+    }
+
+    interface Author {
+      id: number,
+      name: string,
+    }
+
+    interface Publisher {
+      id: number,
+      name: string,
     }
 
     @Component
     export default class App extends Vue {
       private books: Book[] = []
-      private selectedBook: Book = { id: 0, title: '', author: '', publisher: '' }
+      private selectedBook: Book = { id: 0, title: '', author: { id:0, name: "" }, publisher: { id: 0, name: "" } }
       private createDialog: boolean = false
       private updateDialog: boolean = false
-      private authors = [
-        '夏目漱石',
-        '太宰治',
-        'Jim Blandy',
-      ]
-      private publishers = [
-        '講談社',
-        '集英社',
-        'オライリージャパン',
+      private authors: Author[] = []
+      private publishers: Publisher[] = [
+        { id: 1, name: '集英社' },
+        { id: 2, name: 'オライリージャパン'},
       ]
 
+      private author = {
+        value: 1,
+        text: "夏目漱石",
+      }
+
       private mounted() {
-        axios.get('/book/get').then((response) => {
+        axios.get('/api/book/get').then((response) => {
           this.books = response.data
+        })
+
+        axios.get('/api/author/get').then((response) => {
+          this.authors = response.data
         })
       }
 
@@ -75,6 +89,16 @@
         this.updateDialog = true
         this.selectedBook = this.books.find((book) => book.id === id)!
       }
+
+    get authors2() {
+      return this.authors.map((author) => {
+        return {
+          value: author.id,
+          text: author.name,
+        }
+      })
+    }
+
 
     }
 </script>

@@ -12,10 +12,16 @@ public class BookSummary {
     @Column(name = "title")
     public String title;
 
+    @Column(name = "author_id")
+    public Integer authorId;
+
     @Column(name = "author_name")
-    public String author;
+    public String authorName;
+
+    @Column(name = "publisher_id")
+    public Integer publisherId;
 
     @Column(name = "publisher_name")
-    public String publisher;
+    public String publisherName;
 
 }

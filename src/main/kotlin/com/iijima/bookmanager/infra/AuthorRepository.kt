@@ -11,7 +11,7 @@ class AuthorRepository (
 
     fun find(): List<Author> {
         val records = authorDao.select()
-        return records.map{ it -> Author(it.id, it.name) }
+        return records.map{ Author(it.id, it.name) }
     }
 
 }
