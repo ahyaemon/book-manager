@@ -3,7 +3,7 @@ module.exports = {
         port: 8081,
         proxy: {
             "/book": {
-                target: "http://localhost:3000",
+                target: "http://localhost:8080",
             },
         },
     },

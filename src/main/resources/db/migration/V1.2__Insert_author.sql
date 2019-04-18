@@ -1,5 +1,5 @@
 INSERT INTO author
-    (id, name)
+  (id, name)
 VALUES
-    (1, '夏目漱石'),
-    (2, 'Jim Blandy')
+  (1, '夏目漱石'),
+  (2, 'Jim Blandy')

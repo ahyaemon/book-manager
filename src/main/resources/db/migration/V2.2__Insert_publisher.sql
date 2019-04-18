@@ -1,5 +1,5 @@
 INSERT INTO publisher
-    (id, name)
+  (id, name)
 VALUES
-    (1, '集英社'),
-    (2, 'オライリージャパン')
+  (1, '集英社'),
+  (2, 'オライリージャパン')
