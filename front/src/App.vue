@@ -3,6 +3,7 @@
     v-toolbar(app)
       v-toolbar-title BOOK MANAGER
     v-content
+      // 本の一覧表示
       v-container.container(fluid)
         v-layout(row wrap)
           template(v-for="book in books")
@@ -14,16 +15,21 @@
                   div {{ book.author.name }}
                   div {{ book.publisher.name }}
 
+      // 新規作成ボタン
+      v-btn(color='pink', dark, fixed, bottom, right, fab, @click.stop="createDialog = true") +
+
+      // 新規作成ダイアログ
       v-dialog.create-dialog(v-model="createDialog", max-width=500)
         v-card
           v-card-title.headline.grey.lighten-2 新規登録
           v-card-text
-            v-form
-              v-text-field(label="タイトル", :counter="100", required)
-              v-autocomplete(:items="authorItems", label="著者")
-              v-autocomplete(:items="publisherItems", label="出版社")
-              v-btn(color="info") 登録
+            v-form(ref="createForm", lazy-validation)
+              v-text-field(label="タイトル", required, :counter="100" :value="newBook.title")
+              v-autocomplete(:items="authorItems", label="著者", v-model="newBook.author.id")
+              v-autocomplete(:items="publisherItems", label="出版社", v-model="newBook.publisher.id")
+              v-btn(color="info" @click="createBook") 登録
 
+      // 更新ダイアログ
       v-dialog.update-dialog(v-model="updateDialog", max-width=500)
         v-card
           v-card-title.headline.grey.lighten-2 更新
@@ -34,8 +40,6 @@
               v-autocomplete(:items="publisherItems", label="出版社", v-model="selectedBook.publisher.id")
               v-btn(color="info") 更新
               v-btn(color="error") 削除
-
-      v-btn(color='pink', dark, fixed, bottom, right, fab, @click.stop="createDialog = true") +
 
 </template>
 
@@ -64,6 +68,7 @@
     export default class App extends Vue {
       private books: Book[] = []
       private selectedBook: Book = { id: 0, title: '', author: { id: 0, name: '' }, publisher: { id: 0, name: '' } }
+      private newBook: Book = { id: 0, title: '', author: { id: 0, name: '' }, publisher: { id: 0, name: '' } }
       private createDialog: boolean = false
       private updateDialog: boolean = false
       private authors: Author[] = []
@@ -86,6 +91,14 @@
       private showUpdateDialog(id: number) {
         this.updateDialog = true
         this.selectedBook = this.books.find((book) => book.id === id)!
+      }
+
+      private createBook() {
+        if ((this.$refs.createForm as any).validate()) {
+          console.log(this.newBook)
+        } else {
+          console.log("validation failed")
+        }
       }
 
       get authorItems() {
