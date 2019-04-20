@@ -7,6 +7,8 @@ plugins {
 }
 
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'idea'
+idea.module.inheritOutputDirs = true
 
 group = 'com.iijima'
 version = '0.0.1-SNAPSHOT'
@@ -35,22 +37,26 @@ dependencies {
 	implementation "org.seasar.doma:doma:2.24.0"
 }
 
-kapt {
-	arguments {
-		arg("doma.resources.dir", compileKotlin.destinationDir)
-	}
-}
+// コンパイルより前にSQL出力先ディレクトリにコピーするために依存関係を逆転する
+processResources.destinationDir = compileJava.destinationDir
+compileJava.dependsOn processResources
 
-task copyDomaResources(type: Sync)  {
-	from sourceSets.main.resources.srcDirs
-	into compileKotlin.destinationDir
-	include 'doma.compile.config'
-	include 'META-INF/**/*.sql'
-	include 'META-INF/**/*.script'
-}
+//kapt {
+//	arguments {
+//		arg("doma.resources.dir", compileKotlin.destinationDir)
+//	}
+//}
+//
+//task copyDomaResources(type: Sync)  {
+//	from sourceSets.main.resources.srcDirs
+//	into compileKotlin.destinationDir
+//	include 'doma.compile.config'
+//	include 'META-INF/**/*.sql'
+//	include 'META-INF/**/*.script'
+//}
 
 compileKotlin {
-	dependsOn copyDomaResources
+//	dependsOn copyDomaResources
 	kotlinOptions {
 		freeCompilerArgs = ['-Xjsr305=strict']
 		jvmTarget = '1.8'
