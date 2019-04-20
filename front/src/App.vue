@@ -1,7 +1,12 @@
 <template lang='pug'>
   v-app
     v-toolbar(app)
-      v-toolbar-title BOOK MANAGER
+      v-toolbar-items
+        v-btn(icon, @click="jumpToGithub")
+          v-img(:src="require('./assets/github-brands.svg')", contain, height="34")
+      v-toolbar-title
+        div.mt-1 BOOK MANAGER
+      v-spacer
     v-content
       // 本の一覧表示
       v-container.container(fluid)
@@ -97,7 +102,7 @@
         if ((this.$refs.createForm as any).validate()) {
           console.log(this.newBook)
         } else {
-          console.log("validation failed")
+          console.log('validation failed')
         }
       }
 
@@ -117,6 +122,10 @@
             text: publisher.name,
           }
         })
+      }
+
+      private jumpToGithub() {
+        window.open('https://github.com/ahyaemon/book-manager', '_blank')
       }
 
 
