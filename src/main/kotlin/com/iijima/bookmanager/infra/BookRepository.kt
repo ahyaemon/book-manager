@@ -29,6 +29,7 @@ class BookRepository (
     }
 
     fun save(book: Book) {
+        // author が新規作成の場合、INSERT して id を取得する
         val authorId = if (book.author.id == null) {
             val authorRecord = AuthorRecord(null, book.author.name)
             val authorResult = authorDao.insert(authorRecord)
@@ -37,6 +38,7 @@ class BookRepository (
             book.author.id
         }
 
+        // publisher が新規作成の場合、INSERT して id を取得する
         val publisherId = if (book.publisher.id == null) {
             val publisherRecord = PublisherRecord(null, book.publisher.name)
             val publisherResult = publisherDao.insert(publisherRecord)
@@ -50,8 +52,25 @@ class BookRepository (
     }
 
     fun update(book: Book) {
-        // TODO author, publisher については insert の可能性がある
-        val bookRecord = BookRecord(book.id, book.title, book.author.id, book.publisher.id)
+        // author が新規作成の場合、INSERT して id を取得する
+        val authorId = if (book.author.id == null) {
+            val authorRecord = AuthorRecord(null, book.author.name)
+            val authorResult = authorDao.insert(authorRecord)
+            authorResult.entity.id
+        } else {
+            book.author.id
+        }
+
+        // publisher が新規作成の場合、INSERT して id を取得する
+        val publisherId = if (book.publisher.id == null) {
+            val publisherRecord = PublisherRecord(null, book.publisher.name)
+            val publisherResult = publisherDao.insert(publisherRecord)
+            publisherResult.entity.id
+        } else {
+            book.publisher.id
+        }
+
+        val bookRecord = BookRecord(book.id, book.title, authorId, publisherId)
         bookDao.update(bookRecord)
     }
 
