@@ -22,12 +22,9 @@ class BookRepository (
 
     fun find(): List<Book> {
         return bookDao.selectBookSummaries().map{
-            Book(
-                    it.id,
-                    it.title,
-                    Author(it.authorId, it.authorName),
-                    Publisher(it.publisherId, it.publisherName)
-            )
+            val author = Author(it.authorId, it.authorName)
+            val publisher = Publisher(it.publisherId, it.publisherName)
+            Book(it.id, it.title, author, publisher)
         }
     }
 
@@ -50,6 +47,16 @@ class BookRepository (
 
         val bookRecord = BookRecord(null, book.title, authorId, publisherId)
         bookDao.insert(bookRecord)
+    }
+
+    fun update(book: Book) {
+        // TODO author, publisher については insert の可能性がある
+        val bookRecord = BookRecord(book.id, book.title, book.author.id, book.publisher.id)
+        bookDao.update(bookRecord)
+    }
+
+    fun delete(id: Int) {
+        bookDao.delete(id)
     }
 
 }

@@ -1,9 +1,7 @@
 package com.iijima.bookmanager.infra.dao;
 
 import com.iijima.bookmanager.infra.entity.AuthorRecord;
-import org.seasar.doma.Dao;
-import org.seasar.doma.Insert;
-import org.seasar.doma.Select;
+import org.seasar.doma.*;
 import org.seasar.doma.boot.ConfigAutowireable;
 import org.seasar.doma.jdbc.Result;
 

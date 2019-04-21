@@ -24,4 +24,14 @@ class BookController (
         bookRepository.save(book)
     }
 
+    @RequestMapping("/update")
+    fun update(@RequestBody book: Book) {
+        bookRepository.update(book)
+    }
+
+    @RequestMapping("/delete")
+    fun delete(@RequestBody id: Int) {
+        bookRepository.delete(id)
+    }
+
 }

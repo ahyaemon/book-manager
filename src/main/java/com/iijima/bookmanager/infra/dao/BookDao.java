@@ -17,4 +17,10 @@ public interface BookDao {
     @Insert
     Result<BookRecord> insert(BookRecord bookRecord);
 
+    @Update
+    Result<BookRecord> update(BookRecord bookRecord);
+
+    @Delete(sqlFile = true)
+    Result<BookRecord> delete(Integer id);
+
 }
