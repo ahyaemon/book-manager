@@ -21,6 +21,6 @@ public interface BookDao {
     Result<BookRecord> update(BookRecord bookRecord);
 
     @Delete(sqlFile = true)
-    Result<BookRecord> delete(Integer id);
+    int delete(Integer id);
 
 }
