@@ -21,7 +21,7 @@
                   div {{ book.publisher.name }}
 
       // 新規作成ボタン
-      v-btn(color='pink', dark, fixed, bottom, right, fab, @click.stop="createDialog = true") +
+      v-btn(color='pink', dark, fixed, bottom, right, fab, @click.stop="showCreateDialog()") +
 
       // 新規作成ダイアログ
       v-dialog.create-dialog(v-model="createDialog", max-width=500)
@@ -29,9 +29,21 @@
           v-card-title.headline.grey.lighten-2 新規登録
           v-card-text
             v-form(ref="createForm", lazy-validation)
-              v-text-field(label="タイトル", required, :counter="100" :value="newBook.title")
-              v-autocomplete(:items="authorItems", label="著者", v-model="newBook.author.id")
-              v-autocomplete(:items="publisherItems", label="出版社", v-model="newBook.publisher.id")
+              v-text-field(label="タイトル", required, :counter="100" v-model="newBook.title")
+
+              v-autocomplete(:items="authorItems", label="著者", v-model="newBook.author.id" v-if="!addNewAuthor")
+              v-text-field(label="著者を直接入力", required, :counter="100" v-if="addNewAuthor" v-model="newBook.author.name")
+              v-btn(depressed color="white" @click="noAuthorClicked")
+                v-icon.green--text.pr-1 help_outline
+                span.green--text 著者がいない？
+
+              v-autocomplete(:items="publisherItems", label="出版社", v-model="newBook.publisher.id" v-if="!addNewPublisher")
+              v-text-field(label="出版社を直接入力", required, :counter="100" v-if="addNewPublisher" v-model="newBook.publisher.name")
+              v-btn(depressed color="white" @click="noPublisherClicked")
+                v-icon.green--text.pr-1 help_outline
+                span.green--text 出版社がない？
+
+              br
               v-btn(color="info" @click="createBook") 登録
 
       // 更新ダイアログ
@@ -40,7 +52,7 @@
           v-card-title.headline.grey.lighten-2 更新
           v-card-text
             v-form
-              v-text-field(label="タイトル", required, :counter="100", :value="selectedBook.title")
+              v-text-field(label="タイトル", required, :counter="100", v-model="selectedBook.title")
               v-autocomplete(:items="authorItems" label="著者", v-model="selectedBook.author.id")
               v-autocomplete(:items="publisherItems", label="出版社", v-model="selectedBook.publisher.id")
               v-btn(color="info") 更新
@@ -53,29 +65,33 @@
     import axios from 'axios'
 
     interface Book {
-      id: number,
+      id: number | null,
       title: string,
       author: Author,
       publisher: Publisher,
     }
 
     interface Author {
-      id: number,
+      id: number | null,
       name: string,
     }
 
     interface Publisher {
-      id: number,
+      id: number | null,
       name: string,
     }
 
     @Component
     export default class App extends Vue {
       private books: Book[] = []
-      private selectedBook: Book = { id: 0, title: '', author: { id: 0, name: '' }, publisher: { id: 0, name: '' } }
-      private newBook: Book = { id: 0, title: '', author: { id: 0, name: '' }, publisher: { id: 0, name: '' } }
+      private selectedBook: Book = {
+        id: null, title: '', author: { id: null, name: '' }, publisher: { id: null, name: '' } }
+      private newBook: Book = {
+        id: null, title: '', author: { id: null, name: '' }, publisher: { id: null, name: '' } }
       private createDialog: boolean = false
       private updateDialog: boolean = false
+      private addNewAuthor: boolean = false
+      private addNewPublisher: boolean = false
       private authors: Author[] = []
       private publishers: Publisher[] = []
 
@@ -93,17 +109,17 @@
         })
       }
 
+      private showCreateDialog(id: number) {
+        this.createDialog = true
+      }
+
       private showUpdateDialog(id: number) {
         this.updateDialog = true
         this.selectedBook = this.books.find((book) => book.id === id)!
       }
 
       private createBook() {
-        if ((this.$refs.createForm as any).validate()) {
-          console.log(this.newBook)
-        } else {
-          console.log('validation failed')
-        }
+        axios.post('/api/book/create', this.newBook)
       }
 
       get authorItems() {
@@ -128,6 +144,17 @@
         window.open('https://github.com/ahyaemon/book-manager', '_blank')
       }
 
+      private noAuthorClicked() {
+        this.addNewAuthor = !this.addNewAuthor
+        this.newBook.author.id = null
+        this.newBook.author.name = ''
+      }
+
+      private noPublisherClicked() {
+        this.addNewPublisher = !this.addNewPublisher
+        this.newBook.publisher.id = null
+        this.newBook.publisher.name = ''
+      }
 
     }
 </script>

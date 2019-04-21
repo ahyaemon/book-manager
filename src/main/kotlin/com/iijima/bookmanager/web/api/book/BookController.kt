@@ -2,6 +2,8 @@ package com.iijima.bookmanager.web.api.book
 
 import com.iijima.bookmanager.domain.entity.Book
 import com.iijima.bookmanager.infra.BookRepository
+import com.iijima.bookmanager.infra.entity.BookRecord
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -15,6 +17,11 @@ class BookController (
     fun get(): List<Book> {
         val books = bookRepository.find()
         return books
+    }
+
+    @RequestMapping("/create")
+    fun create(@RequestBody book: Book) {
+        bookRepository.save(book)
     }
 
 }

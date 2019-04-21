@@ -3,6 +3,8 @@ spring:
     active: dev
   flyway:
     enabled: false
+doma:
+  dialect: postgres
 
 ---
 spring:

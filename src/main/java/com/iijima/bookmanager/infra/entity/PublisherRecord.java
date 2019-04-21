@@ -2,15 +2,21 @@ package com.iijima.bookmanager.infra.entity;
 
 import org.seasar.doma.*;
 
-@Entity
+@Entity(immutable = true)
+@Table(name = "publisher")
 public class PublisherRecord {
+
+    public PublisherRecord(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    public Integer id;
+    final public Integer id;
 
     @Column(name = "name")
-    public String name;
+    final public String name;
 
 }
