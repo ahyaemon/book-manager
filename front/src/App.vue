@@ -62,32 +62,17 @@
 
 <script lang='ts'>
     import { Component, Vue } from 'vue-property-decorator'
+    import Book from '@/domain/entity/book'
+    import Author from '@/domain/entity/author'
+    import Publisher from '@/domain/entity/publisher'
+    import BookFactory from '@/domain/factory/book_factory'
     import axios from 'axios'
-
-    interface Book {
-      id: number | null,
-      title: string,
-      author: Author,
-      publisher: Publisher,
-    }
-
-    interface Author {
-      id: number | null,
-      name: string,
-    }
-
-    interface Publisher {
-      id: number | null,
-      name: string,
-    }
 
     @Component
     export default class App extends Vue {
       private books: Book[] = []
-      private selectedBook: Book = {
-        id: null, title: '', author: { id: null, name: '' }, publisher: { id: null, name: '' } }
-      private newBook: Book = {
-        id: null, title: '', author: { id: null, name: '' }, publisher: { id: null, name: '' } }
+      private selectedBook: Book = BookFactory.createDefaultBook()
+      private newBook: Book = BookFactory.createDefaultBook()
       private createDialog: boolean = false
       private updateDialog: boolean = false
       private addNewAuthor: boolean = false
@@ -118,8 +103,14 @@
         this.selectedBook = this.books.find((book) => book.id === id)!
       }
 
-      private createBook() {
-        axios.post('/api/book/create', this.newBook)
+      private async createBook() {
+        await axios.post('/api/book/create', this.newBook).then((response) => {
+          this.createDialog = false
+        })
+
+        await axios.get('/api/book/get').then((response) => {
+          this.books = response.data
+        })
       }
 
       get authorItems() {
