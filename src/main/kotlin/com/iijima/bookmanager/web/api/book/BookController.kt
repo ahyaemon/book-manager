@@ -13,9 +13,7 @@ import com.iijima.bookmanager.web.api.book.initialize.BookPageInitializeResponse
 import com.iijima.bookmanager.web.error.ApiError
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/book")
@@ -28,19 +26,19 @@ class BookController (
     /**
      * 全ての [Book] を取得する。
      */
-    @RequestMapping("/get")
+    @GetMapping("/get")
     fun get(): List<Book> = bookRepository.find()
 
     /**
      * 全ての [Author] を取得する。
      */
-    @RequestMapping("/getAuthors")
+    @GetMapping("/getAuthors")
     fun getAuthors(): List<Author> = authorRepository.find()
 
     /**
      * 全ての [Publisher] を取得する。
      */
-    @RequestMapping("/getPublishers")
+    @GetMapping("/getPublishers")
     fun getPublishers(): List<Publisher> = publisherRepository.find()
 
     @RequestMapping("/initialize")
@@ -51,7 +49,7 @@ class BookController (
         return BookPageInitializeResponse(books, authors, publishers)
     }
 
-    @RequestMapping("/create")
+    @PostMapping("/create")
     fun create(@RequestBody @Validated form: BookCreateForm, bindingResult: BindingResult): BookCreateResponse {
         if (bindingResult.hasErrors()) {
             val errors = bindingResult.fieldErrors.map{ ApiError(it.field, it.defaultMessage) }
@@ -67,12 +65,12 @@ class BookController (
         return BookCreateResponse(listOf())
     }
 
-    @RequestMapping("/update")
+    @PostMapping("/update")
     fun update(@RequestBody book: Book) {
         bookRepository.update(book)
     }
 
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     fun delete(@RequestBody form: BookDeleteForm) {
         bookRepository.delete(form.id)
     }

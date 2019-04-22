@@ -38,7 +38,10 @@
                   div {{ book.publisher.name }}
 
       // 新規作成ボタン
-      v-btn(color='pink', dark, fixed, bottom, right, fab, @click.stop="showCreateDialog()") +
+      v-btn(color='black', dark, fixed, bottom, right, fab, @click.stop="showInitDbDialog()") !
+
+      // DB 初期化ボタン
+      v-btn.mr-5(color='pink', dark, fixed, bottom, right, fab, @click.stop="showCreateDialog()", style="margin-left: 20px") +
 
       // 新規作成ダイアログ
       v-dialog.create-dialog(v-model="createDialog", max-width=500)
@@ -129,6 +132,13 @@
               // 更新・削除ボタン
               v-btn(color="info", @click="updateBook") 更新
               v-btn(color="error", @click="deleteBook") 削除
+      // DB 初期化ダイアログ
+      v-dialog.init-db-dialog(v-model="initDbDialog", max-width=300)
+        v-card
+          v-card-text
+            p DB 初期化しますか？
+            v-btn(color="info", @click="initDb") YES
+            v-btn(color="error", @click="initDbDialog = false") NO
 
 </template>
 
@@ -165,6 +175,9 @@
       private addNewAuthorUpdate: boolean = false
       private addNewPublisherUpdate: boolean = false
 
+      // DB 初期化用
+      private initDbDialog: boolean = false
+
       private mounted() {
         axios.get('/api/book/initialize').then((response) => {
           this.books = response.data.books
@@ -173,26 +186,41 @@
         })
       }
 
-      private showCreateDialog(id: number) {
+      /**
+       * 新規作成ダイアログを表示する。
+       */
+      private showCreateDialog() {
         this.createDialogError = DialogErrorFactory.default()
         this.createDialog = true
       }
 
+      /**
+       * 更新ダイアログを表示する。
+       */
       private showUpdateDialog(id: number) {
         this.updateDialog = true
         const book = this.books.find((b) => b.id === id)!
-        this.selectedBook = {
-          id: book.id,
-          title: book.title,
-          author: {
-            id: book.author.id,
-            name: book.author.name,
-          },
-          publisher: {
-            id: book.publisher.id,
-            name: book.publisher.name,
-          },
-        }
+        this.selectedBook = BookFactory.copy(book)
+      }
+
+      /**
+       * DB 初期化ダイアログを表示する。
+       */
+      private showInitDbDialog() {
+        this.initDbDialog = true
+      }
+
+      /**
+       * DB 初期化リクエストを送信する。
+       */
+      private async initDb() {
+        await axios.post('/api/db/init')
+        this.initDbDialog = false
+        axios.get('/api/book/initialize').then((response) => {
+          this.books = response.data.books
+          this.authors = response.data.authors
+          this.publishers = response.data.publishers
+        })
       }
 
       /**
