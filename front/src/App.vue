@@ -13,11 +13,11 @@
           // 検索
           v-flex(pt-3, xs12)
             v-card(color="teal lighten-5")
-              v-card-text
+              v-card-text.ma-0.pa-0
                 v-container.container(fluid)
                   v-form(ref="searchForm", lazy-validation)
                     v-layout(row wrap justify-space-around)
-                      v-flex(xs5)
+                      v-flex(xs5, color="grey")
                         v-text-field.body-1(label="タイトル")
                       v-flex(xs5)
                         v-autocomplete(:items="authorItems", label="著者")
@@ -153,14 +153,14 @@
       private publishers: Publisher[] = []
 
       // 登録用
-      private newBook: Book = BookFactory.createDefaultBook()
+      private newBook: Book = BookFactory.default()
       private createDialog: boolean = false
       private addNewAuthorCreate: boolean = false
       private addNewPublisherCreate: boolean = false
-      private createDialogError: DialogError = DialogErrorFactory.createDefaultDialogError()
+      private createDialogError: DialogError = DialogErrorFactory.default()
 
       // 更新用
-      private selectedBook: Book = BookFactory.createDefaultBook()
+      private selectedBook: Book = BookFactory.default()
       private updateDialog: boolean = false
       private addNewAuthorUpdate: boolean = false
       private addNewPublisherUpdate: boolean = false
@@ -174,7 +174,7 @@
       }
 
       private showCreateDialog(id: number) {
-        this.createDialogError = DialogErrorFactory.createDefaultDialogError()
+        this.createDialogError = DialogErrorFactory.default()
         this.createDialog = true
       }
 
@@ -210,58 +210,33 @@
         }
 
         await axios.post('/api/book/create', this.newBook).then((response: any) => {
+          // バリデーションチェック
           const errors: any[] = response.data.errors
           if (errors.length > 0) {
-            // title
-            const titleError = errors.find((error) => error.field === 'title')
-            if (titleError) {
-                this.createDialogError.title.hasError = true
-                this.createDialogError.title.messages.push(titleError.message)
-            } else {
-                this.createDialogError.title.hasError = false
-                this.createDialogError.title.messages = []
-            }
-            // author
-            const authorError = errors.find((error) => error.field === 'author.validAuthorInput')
-            if (authorError) {
-              if (this.addNewAuthorCreate) {
-                this.createDialogError.authorText.hasError = true
-                this.createDialogError.authorText.messages.push(authorError.message)
-              } else {
-                this.createDialogError.authorSelect.hasError = true
-                this.createDialogError.authorSelect.messages.push(authorError.message)
-              }
-            } else {
-                this.createDialogError.authorText.hasError = false
-                this.createDialogError.authorText.messages = []
-                this.createDialogError.authorSelect.hasError = false
-                this.createDialogError.authorSelect.messages = []
-            }
-            // publisher
-            const publisherError = errors.find((error) => error.field === 'publisher.validPublisherInput')
-            if (publisherError) {
-              if (this.addNewPublisherCreate) {
-                this.createDialogError.publisherText.hasError = true
-                this.createDialogError.publisherText.messages.push(publisherError.message)
-              } else {
-                this.createDialogError.publisherSelect.hasError = true
-                this.createDialogError.publisherSelect.messages.push(publisherError.message)
-              }
-            } else {
-                this.createDialogError.publisherText.hasError = false
-                this.createDialogError.publisherText.messages = []
-                this.createDialogError.publisherSelect.hasError = false
-                this.createDialogError.publisherSelect.messages = []
-            }
+            this.createDialogError =
+                DialogErrorFactory.fromResponseErrors(errors, this.addNewAuthorCreate, this.addNewPublisherCreate)
             return
           }
-
           this.createDialog = false
         })
 
-        await axios.get('/api/book/get').then((response) => {
+        axios.get('/api/book/get').then((response) => {
           this.books = response.data
         })
+
+        // 著者を更新している場合は新たに取得
+        if (this.addNewAuthorCreate) {
+          axios.get('/api/book/getAuthors').then((response) => {
+            this.authors = response.data
+          })
+        }
+
+        // 出版社を更新している場合は新たに取得
+        if (this.addNewPublisherCreate) {
+          axios.get('/api/book/getPublishers').then((response) => {
+            this.publishers = response.data
+          })
+        }
       }
 
       private async updateBook() {

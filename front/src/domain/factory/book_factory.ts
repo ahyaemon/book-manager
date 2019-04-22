@@ -1,7 +1,7 @@
 import Book from '@/domain/entity/book'
 
 export default class BookFactory {
-  public static createDefaultBook(): Book {
+  public static default(): Book {
     return {
       id: null,
       title: '',

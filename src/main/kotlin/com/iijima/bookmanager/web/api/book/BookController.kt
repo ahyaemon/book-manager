@@ -25,11 +25,23 @@ class BookController (
         private val publisherRepository: PublisherRepository
 ) {
 
+    /**
+     * 全ての [Book] を取得する。
+     */
     @RequestMapping("/get")
-    fun get(): List<Book> {
-        val books = bookRepository.find()
-        return books
-    }
+    fun get(): List<Book> = bookRepository.find()
+
+    /**
+     * 全ての [Author] を取得する。
+     */
+    @RequestMapping("/getAuthors")
+    fun getAuthors(): List<Author> = authorRepository.find()
+
+    /**
+     * 全ての [Publisher] を取得する。
+     */
+    @RequestMapping("/getPublishers")
+    fun getPublishers(): List<Publisher> = publisherRepository.find()
 
     @RequestMapping("/initialize")
     fun initialize(): BookPageInitializeResponse {
