@@ -8,12 +8,29 @@
         div.mt-1 BOOK MANAGER
       v-spacer
     v-content
-      // 本の一覧表示
       v-container.container(fluid)
         v-layout(row wrap)
+          // 検索
+          v-flex(pt-3, xs12)
+            v-card(color="teal lighten-5")
+              v-card-text
+                v-container.container(fluid)
+                  v-form(ref="searchForm", lazy-validation)
+                    v-layout(row wrap justify-space-around)
+                      v-flex(xs5)
+                        v-text-field.body-1(label="タイトル")
+                      v-flex(xs5)
+                        v-autocomplete(:items="authorItems", label="著者")
+                    v-layout(row wrap justify-space-around)
+                      v-flex(xs5)
+                        v-autocomplete(:items="publisherItems", label="出版社")
+                      v-flex(xs5)
+                        v-btn.mb-5.mr-5(color='teal darken-3', dark, absolute, bottom, right, fab)
+                          v-icon search
+          // 本の一覧表示
           template(v-for="book in books")
             v-flex(pt-3, xs12)
-              v-card.card(@click.stop="showUpdateDialog(book.id)")
+              v-card(@click.stop="showUpdateDialog(book.id)")
                 v-card-title
                   h1 {{ book.title }}
                 v-card-text
