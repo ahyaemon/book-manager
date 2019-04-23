@@ -1,5 +1,6 @@
 package com.iijima.bookmanager.web.api.book
 
+import com.iijima.bookmanager.domain.BookService
 import com.iijima.bookmanager.domain.entity.Author
 import com.iijima.bookmanager.domain.entity.Book
 import com.iijima.bookmanager.domain.entity.Publisher
@@ -21,43 +22,34 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/book")
 class BookController (
-        private val bookRepository: BookRepository,
-        private val authorRepository: AuthorRepository,
-        private val publisherRepository: PublisherRepository
+        private val bookService: BookService,
+        private val bookRepository: BookRepository
 ) {
 
     /**
      * 全ての [Book] を取得する。
      */
     @GetMapping("/get")
-    fun get(): List<Book> = bookRepository.find()
+    fun get(): List<Book> = bookService.find()
 
     @GetMapping("/search")
     fun search(
             @RequestParam title: String,
             @RequestParam(required = false) authorId: Int?,
             @RequestParam(required = false) publisherId: Int?
-    ): List<Book> = bookRepository.findBy(title, authorId, publisherId)
+    ): List<Book> = bookService.findBy(title, authorId, publisherId)
 
     /**
      * 全ての [Author] を取得する。
      */
     @GetMapping("/getAuthors")
-    fun getAuthors(): List<Author> = authorRepository.find()
+    fun getAuthors(): List<Author> = bookService.findAuthors()
 
     /**
      * 全ての [Publisher] を取得する。
      */
     @GetMapping("/getPublishers")
-    fun getPublishers(): List<Publisher> = publisherRepository.find()
-
-    @RequestMapping("/initialize")
-    fun initialize(): BookPageInitializeResponse {
-        val books = bookRepository.find()
-        val authors = authorRepository.find()
-        val publishers = publisherRepository.find()
-        return BookPageInitializeResponse(books, authors, publishers)
-    }
+    fun getPublishers(): List<Publisher> = bookService.findPublishers()
 
     /**
      * [Book] を新規登録する。
@@ -71,7 +63,7 @@ class BookController (
             return BookCreateResponse(errors)
         }
         val book = form.toBook()
-        bookRepository.save(book)
+        bookService.save(book)
         return BookCreateResponse(listOf())
     }
 
@@ -87,7 +79,7 @@ class BookController (
             return BookUpdateResponse(errors)
         }
         val book = form.toBook()
-        bookRepository.update(book)
+        bookService.update(book)
         return BookUpdateResponse(listOf())
     }
 
@@ -96,7 +88,7 @@ class BookController (
      */
     @PostMapping("/delete")
     fun delete(@RequestBody form: BookDeleteForm) {
-        bookRepository.delete(form.id)
+        bookService.delete(form.id)
     }
 
 }

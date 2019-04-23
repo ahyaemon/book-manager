@@ -21,8 +21,14 @@ class BookRepository (
         private val publisherDao: PublisherDao
 ) {
 
+    /**
+     * 全ての [Book] を返す。
+     */
     fun find(): List<Book> = bookDao.selectBookSummaries().map{ it.toBook() }
 
+    /**
+     * 条件に合致する [Book] を返す。
+     */
     fun findBy(title: String, authorId: Int?, publisherId: Int?): List<Book> {
         val titleCondition = if (title.isEmpty()) {
             null
@@ -32,56 +38,32 @@ class BookRepository (
         return bookDao.selectBookSummariesBy(titleCondition, authorId, publisherId).map{ it.toBook() }
     }
 
+    /**
+     * [Book] を新規登録する。
+     */
     fun save(book: Book) {
-        // author が新規作成の場合、INSERT して id を取得する
-        val authorId = if (book.author.id == null) {
-            val authorRecord = AuthorRecord(null, book.author.name)
-            val authorResult = authorDao.insert(authorRecord)
-            authorResult.entity.id
-        } else {
-            book.author.id
-        }
-
-        // publisher が新規作成の場合、INSERT して id を取得する
-        val publisherId = if (book.publisher.id == null) {
-            val publisherRecord = PublisherRecord(null, book.publisher.name)
-            val publisherResult = publisherDao.insert(publisherRecord)
-            publisherResult.entity.id
-        } else {
-            book.publisher.id
-        }
-
-        val bookRecord = BookRecord(null, book.title, authorId, publisherId)
+        val bookRecord = BookRecord(null, book.title, book.author.id, book.publisher.id)
         bookDao.insert(bookRecord)
     }
 
+    /**
+     * [Book] を更新する。
+     */
     fun update(book: Book) {
-        // author が新規作成の場合、INSERT して id を取得する
-        val authorId = if (book.author.id == null) {
-            val authorRecord = AuthorRecord(null, book.author.name)
-            val authorResult = authorDao.insert(authorRecord)
-            authorResult.entity.id
-        } else {
-            book.author.id
-        }
-
-        // publisher が新規作成の場合、INSERT して id を取得する
-        val publisherId = if (book.publisher.id == null) {
-            val publisherRecord = PublisherRecord(null, book.publisher.name)
-            val publisherResult = publisherDao.insert(publisherRecord)
-            publisherResult.entity.id
-        } else {
-            book.publisher.id
-        }
-
-        val bookRecord = BookRecord(book.id, book.title, authorId, publisherId)
+        val bookRecord = BookRecord(book.id, book.title, book.author.id, book.publisher.id)
         bookDao.update(bookRecord)
     }
 
+    /**
+     * [Book] を削除する。
+     */
     fun delete(id: Int) {
         bookDao.delete(id)
     }
 
+    /**
+     * [BookSummary] を [Book] に変換する。
+     */
     private fun BookSummary.toBook(): Book =
             Book(id, title, Author(authorId, authorName), Publisher(publisherId, publisherName))
 

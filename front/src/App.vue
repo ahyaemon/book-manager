@@ -223,10 +223,14 @@
       private initDbDialog: boolean = false
 
       private mounted() {
-        axios.get('/api/book/initialize').then((response) => {
-          this.books = response.data.books
-          this.authors = response.data.authors
-          this.publishers = response.data.publishers
+        axios.get('/api/book/get').then((response) => {
+          this.books = response.data
+        })
+        axios.get('/api/book/getAuthors').then((response) => {
+          this.authors = response.data
+        })
+        axios.get('/api/book/getPublishers').then((response) => {
+          this.publishers = response.data
         })
       }
 
@@ -261,10 +265,14 @@
       private async initDb() {
         await axios.post('/api/db/init')
         this.initDbDialog = false
-        axios.get('/api/book/initialize').then((response) => {
-          this.books = response.data.books
-          this.authors = response.data.authors
-          this.publishers = response.data.publishers
+        axios.get('/api/book/get').then((response) => {
+          this.books = response.data
+        })
+        axios.get('/api/book/getAuthors').then((response) => {
+          this.authors = response.data
+        })
+        axios.get('/api/book/getPublishers').then((response) => {
+          this.publishers = response.data
         })
       }
 
@@ -459,10 +467,6 @@
   .container {
     width: 1000px;
 
-    .card {
-      width: auto;
-    }
-
     .animation-container {
       width: 100%;
 
@@ -478,7 +482,5 @@
       }
     }
   }
-
-
 
 </style>
