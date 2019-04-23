@@ -1,4 +1,4 @@
-package com.iijima.bookmanager.web.api.book.create
+package com.iijima.bookmanager.web.api.book.update
 
 import com.iijima.bookmanager.domain.entity.Author
 import com.iijima.bookmanager.domain.entity.Book
@@ -7,7 +7,7 @@ import javax.validation.Valid
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Size
 
-data class BookCreateForm (
+data class BookUpdateForm (
         val id: Int?,
 
         @field:NotEmpty(message="タイトルに何か入力してんげり")
@@ -15,11 +15,12 @@ data class BookCreateForm (
         val title: String,
 
         @field:Valid
-        val author: AuthorCreateForm,
+        val author: AuthorUpdateForm,
 
         @field:Valid
-        val publisher: PublisherCreateForm
+        val publisher: PublisherUpdateForm
 ) {
+
         fun toBook(): Book = Book(
                 id, title, Author(author.id, author.name), Publisher(publisher.id, publisher.name))
 

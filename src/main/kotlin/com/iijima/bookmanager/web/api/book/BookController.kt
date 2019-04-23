@@ -10,6 +10,8 @@ import com.iijima.bookmanager.web.api.book.create.BookCreateForm
 import com.iijima.bookmanager.web.api.book.create.BookCreateResponse
 import com.iijima.bookmanager.web.api.book.delete.BookDeleteForm
 import com.iijima.bookmanager.web.api.book.initialize.BookPageInitializeResponse
+import com.iijima.bookmanager.web.api.book.update.BookUpdateForm
+import com.iijima.bookmanager.web.api.book.update.BookUpdateResponse
 import com.iijima.bookmanager.web.error.ApiError
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
@@ -49,27 +51,41 @@ class BookController (
         return BookPageInitializeResponse(books, authors, publishers)
     }
 
+    /**
+     * [Book] を新規登録する。
+     * [Author] が存在しない場合は新規登録する。
+     * [Publisher] が存在しない場合は新規登録する。
+     */
     @PostMapping("/create")
     fun create(@RequestBody @Validated form: BookCreateForm, bindingResult: BindingResult): BookCreateResponse {
         if (bindingResult.hasErrors()) {
             val errors = bindingResult.fieldErrors.map{ ApiError(it.field, it.defaultMessage) }
             return BookCreateResponse(errors)
         }
-        val book = Book(
-                form.id,
-                form.title,
-                Author(form.author.id, form.author.name),
-                Publisher(form.publisher.id, form.publisher.name)
-        )
+        val book = form.toBook()
         bookRepository.save(book)
         return BookCreateResponse(listOf())
     }
 
+    /**
+     * [Book] を更新する。
+     * [Author] が存在しない場合は新規登録する。
+     * [Publisher] が存在しない場合は新規登録する。
+     */
     @PostMapping("/update")
-    fun update(@RequestBody book: Book) {
+    fun update(@RequestBody @Validated form: BookUpdateForm, bindingResult: BindingResult): BookUpdateResponse {
+        if (bindingResult.hasErrors()) {
+            val errors = bindingResult.fieldErrors.map {ApiError(it.field, it.defaultMessage) }
+            return BookUpdateResponse(errors)
+        }
+        val book = form.toBook()
         bookRepository.update(book)
+        return BookUpdateResponse(listOf())
     }
 
+    /**
+     * [Book] を削除する。
+     */
     @PostMapping("/delete")
     fun delete(@RequestBody form: BookDeleteForm) {
         bookRepository.delete(form.id)

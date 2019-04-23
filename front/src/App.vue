@@ -113,19 +113,56 @@
           v-card-text
             v-form
               // タイトル
-              v-text-field(label="タイトル", required, :counter="20", v-model="selectedBook.title")
+              v-text-field.pb-1(
+                label="タイトル",
+                required,
+                :counter="20",
+                v-model="selectedBook.title",
+                :error="updateDialogError.title.hasError",
+                :error-messages="updateDialogError.title.messages"
+              )
               // 著者
-              v-autocomplete(:items="authorItems" label="著者を選択", v-model="selectedBook.author.id", v-if="!addNewAuthorUpdate")
-              v-text-field(label="著者を直接入力", required, :counter="20" v-if="addNewAuthorUpdate", v-model="selectedBook.author.name")
-              v-btn(depressed color="white", @click="noAuthorUpdateClicked")
-                v-icon.green--text.pr-1 arrow_upward
+              v-autocomplete(
+                :items="authorItems",
+                label="著者",
+                v-model="selectedBook.author.id",
+                v-if="!addNewAuthorUpdate",
+                :error="updateDialogError.authorSelect.hasError",
+                :error-messages="updateDialogError.authorSelect.messages",
+              )
+              v-text-field(
+                label="著者を直接入力",
+                required,
+                :counter="20",
+                v-if="addNewAuthorUpdate",
+                v-model="selectedBook.author.name"
+                :error="updateDialogError.authorText.hasError",
+                :error-messages="updateDialogError.authorText.messages",
+              )
+              v-btn(depressed color="white" @click="noAuthorUpdateClicked")
+                v-icon.green--text.pr-1 help_outline
                 span.green--text(v-if="!addNewAuthorUpdate") 直接入力に変更（選択肢に無い場合）
                 span.green--text(v-if="addNewAuthorUpdate") 選択肢に変更
               // 出版社
-              v-autocomplete(:items="publisherItems", label="出版社を選択", v-model="selectedBook.publisher.id", v-if="!addNewPublisherUpdate")
-              v-text-field(label="出版社を直接入力", required, :counter="20", v-if="addNewPublisherUpdate", v-model="selectedBook.publisher.name")
+              v-autocomplete(
+                :items="publisherItems",
+                label="出版社",
+                v-model="selectedBook.publisher.id"
+                v-if="!addNewPublisherUpdate",
+                :error="updateDialogError.publisherSelect.hasError",
+                :error-messages="updateDialogError.publisherSelect.messages",
+              )
+              v-text-field(
+                label="出版社を直接入力",
+                required,
+                :counter="20",
+                v-if="addNewPublisherUpdate",
+                v-model="selectedBook.publisher.name"
+                :error="updateDialogError.publisherText.hasError",
+                :error-messages="updateDialogError.publisherText.messages",
+              )
               v-btn(depressed color="white", @click="noPublisherUpdateClicked")
-                v-icon.green--text.pr-1 arrow_upward
+                v-icon.green--text.pr-1 help_outline
                 span.green--text(v-if="!addNewPublisherUpdate") 直接入力に変更（選択肢に無い場合）
                 span.green--text(v-if="addNewPublisherUpdate") 選択肢に変更
               br
@@ -174,6 +211,7 @@
       private updateDialog: boolean = false
       private addNewAuthorUpdate: boolean = false
       private addNewPublisherUpdate: boolean = false
+      private updateDialogError: DialogError = DialogErrorFactory.default()
 
       // DB 初期化用
       private initDbDialog: boolean = false
@@ -198,9 +236,10 @@
        * 更新ダイアログを表示する。
        */
       private showUpdateDialog(id: number) {
-        this.updateDialog = true
+        this.updateDialogError = DialogErrorFactory.default()
         const book = this.books.find((b) => b.id === id)!
         this.selectedBook = BookFactory.copy(book)
+        this.updateDialog = true
       }
 
       /**
@@ -256,6 +295,7 @@
         if (this.addNewAuthorCreate) {
           axios.get('/api/book/getAuthors').then((response) => {
             this.authors = response.data
+            this.addNewAuthorCreate = false
           })
         }
 
@@ -263,10 +303,16 @@
         if (this.addNewPublisherCreate) {
           axios.get('/api/book/getPublishers').then((response) => {
             this.publishers = response.data
+            this.addNewPublisherCreate = false
           })
         }
       }
 
+      /**
+       * 本を更新する。
+       * 著者が存在しない場合は新規作成。
+       * 出版社が存在しない場合は新規作成。
+       */
       private async updateBook() {
         if (this.addNewAuthorUpdate) {
           this.selectedBook.author.id = null
@@ -277,12 +323,35 @@
         }
 
         await axios.post('/api/book/update', this.selectedBook).then((response) => {
+          // バリデーションチェック
+          const errors: any[] = response.data.errors
+          if (errors.length > 0) {
+            this.updateDialogError =
+                DialogErrorFactory.fromResponseErrors(errors, this.addNewAuthorUpdate, this.addNewPublisherUpdate)
+            return
+          }
           this.updateDialog = false
         })
 
-        await axios.get('/api/book/get').then((response) => {
+        axios.get('/api/book/get').then((response) => {
           this.books = response.data
         })
+
+        // 著者を更新している場合は新たに取得
+        if (this.addNewAuthorUpdate) {
+          axios.get('/api/book/getAuthors').then((response) => {
+            this.authors = response.data
+            this.addNewAuthorUpdate = false
+          })
+        }
+
+        // 出版社を更新している場合は新たに取得
+        if (this.addNewPublisherUpdate) {
+          axios.get('/api/book/getPublishers').then((response) => {
+            this.publishers = response.data
+            this.addNewPublisherUpdate = false
+          })
+        }
       }
 
       private async deleteBook() {

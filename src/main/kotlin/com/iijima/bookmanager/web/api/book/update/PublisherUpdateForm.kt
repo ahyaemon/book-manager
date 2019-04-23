@@ -1,8 +1,9 @@
-package com.iijima.bookmanager.web.api.book.create
+package com.iijima.bookmanager.web.api.book.update
 
+import com.iijima.bookmanager.domain.entity.Book
 import javax.validation.constraints.AssertTrue
 
-data class PublisherCreateForm (
+data class PublisherUpdateForm (
         val id: Int?,
 
         val name: String
