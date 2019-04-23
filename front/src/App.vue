@@ -28,9 +28,9 @@
                         v-btn.mb-5.mr-5(color='teal darken-3', dark, absolute, bottom, right, fab)
                           v-icon search
           // 本の一覧表示
-          template(v-for="book in books")
-            v-flex(pt-3, xs12)
-              v-card(@click.stop="showUpdateDialog(book.id)")
+          transition-group.animation-container(name="list", tag="span")
+            v-flex.list-item(pt-3, xs12, v-for="book in reversedBooks", :key="book.id")
+              v-card.card(@click.stop="showUpdateDialog(book.id)")
                 v-card-title
                   h1 {{ book.title }}
                 v-card-text
@@ -382,6 +382,10 @@
         })
       }
 
+      get reversedBooks() {
+        return this.books.reverse()
+      }
+
       private jumpToGithub() {
         window.open('https://github.com/ahyaemon/book-manager', '_blank')
       }
@@ -416,5 +420,23 @@
 
   .container {
     width: 1000px;
+
+    .animation-container {
+      width: 100%;
+
+      .list-item {
+        transition: all 0.3s;
+      }
+      .list-enter, .list-leave-to {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      .list-leave-active {
+        position: absolute;
+      }
+    }
   }
+
+
+
 </style>
