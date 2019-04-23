@@ -18,14 +18,14 @@
                   v-form(ref="searchForm", lazy-validation)
                     v-layout(row wrap justify-space-around)
                       v-flex(xs5, color="grey")
-                        v-text-field.body-1(label="タイトル")
+                        v-text-field.body-1(label="タイトル", :counter="20", v-model="searchCondition.title")
                       v-flex(xs5)
-                        v-autocomplete(:items="authorItems", label="著者")
+                        v-autocomplete(:items="authorItems", clearable, label="著者", v-model="searchCondition.authorId")
                     v-layout(row wrap justify-space-around)
                       v-flex(xs5)
-                        v-autocomplete(:items="publisherItems", label="出版社")
+                        v-autocomplete(:items="publisherItems", clearable, label="出版社", v-model="searchCondition.publisherId")
                       v-flex(xs5)
-                        v-btn.mb-5.mr-5(color='teal darken-3', dark, absolute, bottom, right, fab)
+                        v-btn.mb-5.mr-5(color='teal darken-3', dark, absolute, bottom, right, fab, @click="searchBooks")
                           v-icon search
           // 本の一覧表示
           transition-group.animation-container(name="list", tag="span")
@@ -187,9 +187,12 @@
     import Publisher from '@/domain/entity/publisher'
     import BookFactory from '@/domain/factory/book_factory'
 
-    import ApiError from '@/domain/vo/ApiError'
-    import DialogError from '@/domain/vo/DialogError'
+    import ApiError from '@/domain/vo/api_error'
+    import DialogError from '@/domain/vo/dialog_error'
     import DialogErrorFactory from '@/domain/factory/dialog_error_factory'
+
+    import SearchCondition from '@/domain/vo/search_condition'
+    import SearchConditionFactory from '@/domain/factory/search_condition_factory'
 
     import axios from 'axios'
 
@@ -212,6 +215,9 @@
       private addNewAuthorUpdate: boolean = false
       private addNewPublisherUpdate: boolean = false
       private updateDialogError: DialogError = DialogErrorFactory.default()
+
+      // 検索用
+      private searchCondition: SearchCondition = SearchConditionFactory.default()
 
       // DB 初期化用
       private initDbDialog: boolean = false
@@ -354,6 +360,18 @@
         }
       }
 
+      /**
+       * 検索条件に従って本を検索する。
+       */
+      private searchBooks() {
+        axios.get('/api/book/search', { params: this.searchCondition }).then((response) => {
+          this.books = response.data
+        })
+      }
+
+      /**
+       * 本を削除する。
+       */
       private async deleteBook() {
         await axios.post('/api/book/delete', { id: this.selectedBook.id }).then((response) => {
           this.updateDialog = false
@@ -364,6 +382,9 @@
         })
       }
 
+      /**
+       * vuetify の select 用に、authors を変換する。
+       */
       get authorItems() {
         return this.authors.map((author) => {
           return {
@@ -373,6 +394,9 @@
         })
       }
 
+      /**
+       * vuetify の select publishers を変換する。
+       */
       get publisherItems() {
         return this.publishers.map((publisher) => {
           return {
@@ -382,30 +406,44 @@
         })
       }
 
+      /**
+       * 新しい本が上に来るようにするため、リストを reverse する。
+       */
       get reversedBooks() {
         return this.books.reverse()
       }
 
+      /**
+       * github へ遷移させる。
+       */
       private jumpToGithub() {
         window.open('https://github.com/ahyaemon/book-manager', '_blank')
       }
 
+      /**
+       * 著者の入力方法を切り替える（新規作成ダイアログ）。
+       */
       private noAuthorCreateClicked() {
         this.addNewAuthorCreate = !this.addNewAuthorCreate
-        this.newBook.author.id = null
-        this.newBook.author.name = ''
       }
 
+      /**
+       * 出版社の入力方法を切り替える（新規作成ダイアログ）。
+       */
       private noPublisherCreateClicked() {
         this.addNewPublisherCreate = !this.addNewPublisherCreate
-        this.newBook.publisher.id = null
-        this.newBook.publisher.name = ''
       }
 
+      /**
+       * 著者の入力方法を切り替える（更新ダイアログ）。
+       */
       private noAuthorUpdateClicked() {
         this.addNewAuthorUpdate = !this.addNewAuthorUpdate
       }
 
+      /**
+       * 出版社の入力方法を切り替える（更新ダイアログ）。
+       */
       private noPublisherUpdateClicked() {
         this.addNewPublisherUpdate = !this.addNewPublisherUpdate
       }
@@ -420,6 +458,10 @@
 
   .container {
     width: 1000px;
+
+    .card {
+      width: auto;
+    }
 
     .animation-container {
       width: 100%;

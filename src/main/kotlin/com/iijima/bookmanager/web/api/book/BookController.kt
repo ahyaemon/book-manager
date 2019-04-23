@@ -10,6 +10,7 @@ import com.iijima.bookmanager.web.api.book.create.BookCreateForm
 import com.iijima.bookmanager.web.api.book.create.BookCreateResponse
 import com.iijima.bookmanager.web.api.book.delete.BookDeleteForm
 import com.iijima.bookmanager.web.api.book.initialize.BookPageInitializeResponse
+import com.iijima.bookmanager.web.api.book.select.SearchCondition
 import com.iijima.bookmanager.web.api.book.update.BookUpdateForm
 import com.iijima.bookmanager.web.api.book.update.BookUpdateResponse
 import com.iijima.bookmanager.web.error.ApiError
@@ -30,6 +31,13 @@ class BookController (
      */
     @GetMapping("/get")
     fun get(): List<Book> = bookRepository.find()
+
+    @GetMapping("/search")
+    fun search(
+            @RequestParam title: String,
+            @RequestParam(required = false) authorId: Int?,
+            @RequestParam(required = false) publisherId: Int?
+    ): List<Book> = bookRepository.findBy(title, authorId, publisherId)
 
     /**
      * 全ての [Author] を取得する。

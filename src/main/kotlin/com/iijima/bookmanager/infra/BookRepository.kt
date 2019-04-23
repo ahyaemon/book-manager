@@ -8,6 +8,7 @@ import com.iijima.bookmanager.infra.dao.BookDao
 import com.iijima.bookmanager.infra.dao.PublisherDao
 import com.iijima.bookmanager.infra.entity.AuthorRecord
 import com.iijima.bookmanager.infra.entity.BookRecord
+import com.iijima.bookmanager.infra.entity.BookSummary
 import com.iijima.bookmanager.infra.entity.PublisherRecord
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -20,12 +21,15 @@ class BookRepository (
         private val publisherDao: PublisherDao
 ) {
 
-    fun find(): List<Book> {
-        return bookDao.selectBookSummaries().map{
-            val author = Author(it.authorId, it.authorName)
-            val publisher = Publisher(it.publisherId, it.publisherName)
-            Book(it.id, it.title, author, publisher)
+    fun find(): List<Book> = bookDao.selectBookSummaries().map{ it.toBook() }
+
+    fun findBy(title: String, authorId: Int?, publisherId: Int?): List<Book> {
+        val titleCondition = if (title.isEmpty()) {
+            null
+        } else {
+            "%$title%"
         }
+        return bookDao.selectBookSummariesBy(titleCondition, authorId, publisherId).map{ it.toBook() }
     }
 
     fun save(book: Book) {
@@ -77,5 +81,8 @@ class BookRepository (
     fun delete(id: Int) {
         bookDao.delete(id)
     }
+
+    private fun BookSummary.toBook(): Book =
+            Book(id, title, Author(authorId, authorName), Publisher(publisherId, publisherName))
 
 }

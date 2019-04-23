@@ -1,5 +1,6 @@
 package com.iijima.bookmanager.infra.entity;
 
+import com.iijima.bookmanager.domain.entity.Book;
 import org.seasar.doma.Column;
 import org.seasar.doma.Entity;
 

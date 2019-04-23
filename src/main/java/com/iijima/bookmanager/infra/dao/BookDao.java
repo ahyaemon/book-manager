@@ -14,6 +14,9 @@ public interface BookDao {
     @Select
     List<BookSummary> selectBookSummaries();
 
+    @Select
+    List<BookSummary> selectBookSummariesBy(String title, Integer authorId, Integer publisherId);
+
     @Insert
     Result<BookRecord> insert(BookRecord bookRecord);
 

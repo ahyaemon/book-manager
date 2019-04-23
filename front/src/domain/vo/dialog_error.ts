@@ -1,4 +1,4 @@
-import ApiError from '@/domain/vo/ApiError'
+import ApiError from '@/domain/vo/api_error'
 
 export default interface DialogError {
   title: ApiError,

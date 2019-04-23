@@ -1,5 +1,5 @@
-import ApiError from '@/domain/vo/ApiError'
-import DialogError from '@/domain/vo/DialogError'
+import ApiError from '@/domain/vo/api_error'
+import DialogError from '@/domain/vo/dialog_error'
 
 export default class DialogErrorFactory {
 
