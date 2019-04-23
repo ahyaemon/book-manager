@@ -1,4 +1,6 @@
-select
+SELECT
   *
-from
+FROM
   author
+ORDER BY
+  id

@@ -15,3 +15,5 @@ INNER JOIN
   publisher
   ON
     publisher.id = book.publisher_id
+ORDER BY
+  book.id
