@@ -59,4 +59,9 @@ class BookRepository (
     private fun BookSummary.toBook(): Book =
             Book(id, title, Author(authorId, authorName), Publisher(publisherId, publisherName))
 
+    /**
+     * 異なる id でタイトル、著者、出版社が重複する [Book] の数を取得する。
+     */
+    fun countSameBook(book: Book): Int = bookDao.countSameBook(book)
+
 }

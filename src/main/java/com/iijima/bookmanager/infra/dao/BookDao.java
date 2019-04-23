@@ -1,5 +1,6 @@
 package com.iijima.bookmanager.infra.dao;
 
+import com.iijima.bookmanager.domain.entity.Book;
 import com.iijima.bookmanager.infra.entity.BookRecord;
 import com.iijima.bookmanager.infra.entity.BookSummary;
 import org.seasar.doma.*;
@@ -16,6 +17,9 @@ public interface BookDao {
 
     @Select
     List<BookSummary> selectBookSummariesBy(String title, Integer authorId, Integer publisherId);
+
+    @Select
+    int countSameBook(Book book);
 
     @Insert
     Result<BookRecord> insert(BookRecord bookRecord);

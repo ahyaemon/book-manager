@@ -105,6 +105,7 @@
               br
               // 登録ボタン
               v-btn(color="info", @click="createBook") 登録
+              span.red--text(v-if="createDialogError.duplicated.hasError") {{createDialogError.duplicated.messages[0]}}
 
       // 更新ダイアログ
       v-dialog.update-dialog(v-model="updateDialog", max-width=500)
@@ -169,6 +170,7 @@
               // 更新・削除ボタン
               v-btn(color="info", @click="updateBook") 更新
               v-btn(color="error", @click="deleteBook") 削除
+              span.red--text(v-if="updateDialogError.duplicated.hasError") {{updateDialogError.duplicated.messages[0]}}
       // DB 初期化ダイアログ
       v-dialog.init-db-dialog(v-model="initDbDialog", max-width=300)
         v-card
@@ -273,16 +275,20 @@
        * 著者が存在しない場合は新規作成。
        * 出版社が存在しない場合は新規作成。
        */
-      private async createBook() {
+      private createBook() {
         if (this.addNewAuthorCreate) {
           this.newBook.author.id = null
+        } else {
+          this.newBook.author.name = ''
         }
 
         if (this.addNewPublisherCreate) {
           this.newBook.publisher.id = null
+        } else {
+          this.newBook.publisher.name = ''
         }
 
-        await axios.post('/api/book/create', this.newBook).then((response: any) => {
+        axios.post('/api/book/create', this.newBook).then((response: any) => {
           // バリデーションチェック
           const errors: any[] = response.data.errors
           if (errors.length > 0) {
@@ -291,27 +297,25 @@
             return
           }
           this.createDialog = false
-        })
-
-        axios.get('/api/book/get').then((response) => {
-          this.books = response.data
-        })
-
-        // 著者を更新している場合は新たに取得
-        if (this.addNewAuthorCreate) {
-          axios.get('/api/book/getAuthors').then((response) => {
-            this.authors = response.data
-            this.addNewAuthorCreate = false
+          this.newBook = BookFactory.default()
+          axios.get('/api/book/get').then((r) => {
+            this.books = r.data
           })
-        }
-
-        // 出版社を更新している場合は新たに取得
-        if (this.addNewPublisherCreate) {
-          axios.get('/api/book/getPublishers').then((response) => {
-            this.publishers = response.data
-            this.addNewPublisherCreate = false
-          })
-        }
+          // 著者を更新している場合は新たに取得
+          if (this.addNewAuthorCreate) {
+            axios.get('/api/book/getAuthors').then((r) => {
+              this.authors = r.data
+              this.addNewAuthorCreate = false
+            })
+          }
+          // 出版社を更新している場合は新たに取得
+          if (this.addNewPublisherCreate) {
+            axios.get('/api/book/getPublishers').then((r) => {
+              this.publishers = r.data
+              this.addNewPublisherCreate = false
+            })
+          }
+        })
       }
 
       /**
@@ -319,16 +323,20 @@
        * 著者が存在しない場合は新規作成。
        * 出版社が存在しない場合は新規作成。
        */
-      private async updateBook() {
+      private updateBook() {
         if (this.addNewAuthorUpdate) {
           this.selectedBook.author.id = null
+        } else {
+          this.selectedBook.author.name = ''
         }
 
         if (this.addNewPublisherUpdate) {
           this.selectedBook.publisher.id = null
+        } else {
+          this.selectedBook.publisher.name = ''
         }
 
-        await axios.post('/api/book/update', this.selectedBook).then((response) => {
+        axios.post('/api/book/update', this.selectedBook).then((response) => {
           // バリデーションチェック
           const errors: any[] = response.data.errors
           if (errors.length > 0) {
@@ -337,27 +345,25 @@
             return
           }
           this.updateDialog = false
+          axios.get('/api/book/get').then((r) => {
+            this.books = r.data
+          })
+          // 著者を更新している場合は新たに取得
+          if (this.addNewAuthorUpdate) {
+            axios.get('/api/book/getAuthors').then((r) => {
+              this.authors = r.data
+              this.addNewAuthorUpdate = false
+            })
+          }
+          // 出版社を更新している場合は新たに取得
+          if (this.addNewPublisherUpdate) {
+            axios.get('/api/book/getPublishers').then((r) => {
+              this.publishers = r.data
+              this.addNewPublisherUpdate = false
+            })
+          }
         })
 
-        axios.get('/api/book/get').then((response) => {
-          this.books = response.data
-        })
-
-        // 著者を更新している場合は新たに取得
-        if (this.addNewAuthorUpdate) {
-          axios.get('/api/book/getAuthors').then((response) => {
-            this.authors = response.data
-            this.addNewAuthorUpdate = false
-          })
-        }
-
-        // 出版社を更新している場合は新たに取得
-        if (this.addNewPublisherUpdate) {
-          axios.get('/api/book/getPublishers').then((response) => {
-            this.publishers = response.data
-            this.addNewPublisherUpdate = false
-          })
-        }
       }
 
       /**

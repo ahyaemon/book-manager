@@ -26,8 +26,14 @@ class PublisherRepository (
     /**
      * [Publisher] を登録する。
      * 登録した [Publisher] を返す。
+     * [Publisher] がすでに存在する場合は登録せずにそのまま返す。
      */
     fun save(publisher: Publisher): Publisher {
+        // 存在チェック
+        if (publishersCache.any{ it.name == publisher.name }) {
+            return publishersCache.first{ it.name == publisher.name }
+        }
+
         // DB に保存
         val record = PublisherRecord(null, publisher.name)
         val result = publisherDao.insert(record)

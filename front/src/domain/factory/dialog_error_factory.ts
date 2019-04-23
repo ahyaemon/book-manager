@@ -13,6 +13,7 @@ export default class DialogErrorFactory {
       authorSelect: DialogErrorFactory.createDefaultApiError(),
       publisherText: DialogErrorFactory.createDefaultApiError(),
       publisherSelect: DialogErrorFactory.createDefaultApiError(),
+      duplicated: DialogErrorFactory.createDefaultApiError(),
     }
   }
 
@@ -65,6 +66,16 @@ export default class DialogErrorFactory {
         dialogError.publisherSelect.hasError = false
         dialogError.publisherSelect.messages = []
     }
+    // duplicated
+    const duplicatedError = errors.find((error) => error.field === 'duplicated')
+    if (duplicatedError) {
+      dialogError.duplicated.hasError = true
+      dialogError.duplicated.messages.push(duplicatedError.message)
+    } else {
+      dialogError.duplicated.hasError = false
+      dialogError.duplicated.messages = []
+    }
+
     return dialogError
   }
 

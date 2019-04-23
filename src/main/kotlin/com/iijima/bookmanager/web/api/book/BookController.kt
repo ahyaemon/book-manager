@@ -73,6 +73,9 @@ class BookController (
             return BookCreateResponse(errors)
         }
         val book = form.toBook()
+        if (bookService.hasSameBook(book)) {
+            return BookCreateResponse(listOf(ApiError("duplicated", "この本はすでに存在しています。")))
+        }
         bookService.save(book)
         return BookCreateResponse(listOf())
     }
@@ -89,6 +92,9 @@ class BookController (
             return BookUpdateResponse(errors)
         }
         val book = form.toBook()
+        if (bookService.hasSameBook(book)) {
+            return BookUpdateResponse(listOf(ApiError("duplicated", "同じ本がすでに存在しています。")))
+        }
         bookService.update(book)
         return BookUpdateResponse(listOf())
     }

@@ -91,4 +91,9 @@ class BookService (
         bookRepository.delete(id)
     }
 
+    /**
+     * 異なる id でタイトル、著者、出版社が重複する [Book] が存在する場合、true。
+     */
+    fun hasSameBook(book: Book): Boolean = bookRepository.countSameBook(book) > 0
+
 }

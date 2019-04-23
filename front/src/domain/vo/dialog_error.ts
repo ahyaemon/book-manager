@@ -6,4 +6,5 @@ export default interface DialogError {
   authorSelect: ApiError,
   publisherText: ApiError,
   publisherSelect: ApiError,
+  duplicated: ApiError,
 }

@@ -25,8 +25,14 @@ class AuthorRepository (
     /**
      * [Author] を登録する。
      * 登録した [Author] を返す。
+     * [Author] がすでに存在する場合は登録せずにそのまま返す。
      */
     fun save(author: Author): Author {
+        // 存在チェック
+        if (authorsCache.any { it.name == author.name }) {
+            return authorsCache.first{ it.name == author.name }
+        }
+
         // DB に保存
         val record = AuthorRecord(null, author.name)
         val result = authorDao.insert(record)
@@ -38,4 +44,4 @@ class AuthorRepository (
         return newAuthor
     }
 
-}
+ }
