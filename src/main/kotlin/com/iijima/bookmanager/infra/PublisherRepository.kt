@@ -11,21 +11,32 @@ class PublisherRepository (
 ){
 
     /**
+     * [find] の初回呼び出し時に DB からデータを取得し、キャッシュする。
+     */
+    val publishersCache: MutableList<Publisher> by lazy {
+        val records = publisherDao.select()
+        records.map{ Publisher(it.id, it.name) }.toMutableList()
+    }
+
+    /**
      * 全ての [Publisher] を返す。
      */
-    fun find(): List<Publisher> {
-        val records = publisherDao.select()
-        return records.map{ Publisher(it.id, it.name) }
-    }
+    fun find(): List<Publisher> = publishersCache
 
     /**
      * [Publisher] を登録する。
      * 登録した [Publisher] を返す。
      */
     fun save(publisher: Publisher): Publisher {
+        // DB に保存
         val record = PublisherRecord(null, publisher.name)
         val result = publisherDao.insert(record)
-        return Publisher(result.entity.id, publisher.name)
+        val newPublisher = Publisher(result.entity.id, publisher.name)
+
+        // キャッシュに追加
+        publishersCache.add(newPublisher)
+
+        return newPublisher
     }
 
 }

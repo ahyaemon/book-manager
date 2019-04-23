@@ -4,14 +4,9 @@ import com.iijima.bookmanager.domain.BookService
 import com.iijima.bookmanager.domain.entity.Author
 import com.iijima.bookmanager.domain.entity.Book
 import com.iijima.bookmanager.domain.entity.Publisher
-import com.iijima.bookmanager.infra.AuthorRepository
-import com.iijima.bookmanager.infra.BookRepository
-import com.iijima.bookmanager.infra.PublisherRepository
 import com.iijima.bookmanager.web.api.book.create.BookCreateForm
 import com.iijima.bookmanager.web.api.book.create.BookCreateResponse
 import com.iijima.bookmanager.web.api.book.delete.BookDeleteForm
-import com.iijima.bookmanager.web.api.book.initialize.BookPageInitializeResponse
-import com.iijima.bookmanager.web.api.book.select.SearchCondition
 import com.iijima.bookmanager.web.api.book.update.BookUpdateForm
 import com.iijima.bookmanager.web.api.book.update.BookUpdateResponse
 import com.iijima.bookmanager.web.error.ApiError
@@ -22,8 +17,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/book")
 class BookController (
-        private val bookService: BookService,
-        private val bookRepository: BookRepository
+        private val bookService: BookService
 ) {
 
     /**

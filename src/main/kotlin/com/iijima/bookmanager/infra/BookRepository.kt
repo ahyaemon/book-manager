@@ -3,22 +3,14 @@ package com.iijima.bookmanager.infra
 import com.iijima.bookmanager.domain.entity.Author
 import com.iijima.bookmanager.domain.entity.Book
 import com.iijima.bookmanager.domain.entity.Publisher
-import com.iijima.bookmanager.infra.dao.AuthorDao
 import com.iijima.bookmanager.infra.dao.BookDao
-import com.iijima.bookmanager.infra.dao.PublisherDao
-import com.iijima.bookmanager.infra.entity.AuthorRecord
 import com.iijima.bookmanager.infra.entity.BookRecord
 import com.iijima.bookmanager.infra.entity.BookSummary
-import com.iijima.bookmanager.infra.entity.PublisherRecord
 import org.springframework.stereotype.Repository
-import org.springframework.transaction.annotation.Transactional
 
 @Repository
-@Transactional
 class BookRepository (
-        private val bookDao: BookDao,
-        private val authorDao: AuthorDao,
-        private val publisherDao: PublisherDao
+        private val bookDao: BookDao
 ) {
 
     /**
