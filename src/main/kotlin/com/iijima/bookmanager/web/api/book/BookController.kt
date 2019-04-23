@@ -7,6 +7,7 @@ import com.iijima.bookmanager.domain.entity.Publisher
 import com.iijima.bookmanager.web.api.book.create.BookCreateForm
 import com.iijima.bookmanager.web.api.book.create.BookCreateResponse
 import com.iijima.bookmanager.web.api.book.delete.BookDeleteForm
+import com.iijima.bookmanager.web.api.book.initialize.BookPageInitializeResponse
 import com.iijima.bookmanager.web.api.book.update.BookUpdateForm
 import com.iijima.bookmanager.web.api.book.update.BookUpdateResponse
 import com.iijima.bookmanager.web.error.ApiError
@@ -21,11 +22,26 @@ class BookController (
 ) {
 
     /**
+     * 全ての [Book], [Author], [Publisher] を取得する。
+     * ページ表示時などで、まとめて取得する用。
+     */
+    @GetMapping("/initialize")
+    fun initialize(): BookPageInitializeResponse {
+        val books = bookService.find()
+        val authors = bookService.findAuthors()
+        val publishers = bookService.findPublishers()
+        return BookPageInitializeResponse(books, authors, publishers)
+    }
+
+    /**
      * 全ての [Book] を取得する。
      */
     @GetMapping("/get")
     fun get(): List<Book> = bookService.find()
 
+    /**
+     * 条件に合致する [Book] を取得する。
+     */
     @GetMapping("/search")
     fun search(
             @RequestParam title: String,

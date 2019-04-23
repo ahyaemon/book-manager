@@ -173,7 +173,7 @@
       v-dialog.init-db-dialog(v-model="initDbDialog", max-width=300)
         v-card
           v-card-text
-            p DB 初期化しますか？
+            p DB を初期状態に戻しますか？
             v-btn(color="info", @click="initDb") YES
             v-btn(color="error", @click="initDbDialog = false") NO
 
@@ -222,15 +222,11 @@
       // DB 初期化用
       private initDbDialog: boolean = false
 
-      private mounted() {
-        axios.get('/api/book/get').then((response) => {
-          this.books = response.data
-        })
-        axios.get('/api/book/getAuthors').then((response) => {
-          this.authors = response.data
-        })
-        axios.get('/api/book/getPublishers').then((response) => {
-          this.publishers = response.data
+      private beforeMount() {
+        axios.get('/api/book/initialize').then((response) => {
+          this.books = response.data.books
+          this.authors = response.data.authors
+          this.publishers = response.data.publishers
         })
       }
 
@@ -265,14 +261,10 @@
       private async initDb() {
         await axios.post('/api/db/init')
         this.initDbDialog = false
-        axios.get('/api/book/get').then((response) => {
-          this.books = response.data
-        })
-        axios.get('/api/book/getAuthors').then((response) => {
-          this.authors = response.data
-        })
-        axios.get('/api/book/getPublishers').then((response) => {
-          this.publishers = response.data
+        axios.get('/api/book/initialize').then((response) => {
+          this.books = response.data.books
+          this.authors = response.data.authors
+          this.publishers = response.data.publishers
         })
       }
 
