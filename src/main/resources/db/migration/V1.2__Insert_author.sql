@@ -3,3 +3,4 @@ INSERT INTO author
 VALUES
   (1, '夏目漱石'),
   (2, 'Jim Blandy')
+;

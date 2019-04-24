@@ -3,3 +3,4 @@ CREATE TABLE publisher (
   name TEXT UNIQUE NOT NULL,
   PRIMARY KEY (id)
 )
+;

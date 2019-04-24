@@ -3,3 +3,4 @@ INSERT INTO publisher
 VALUES
   (1, '集英社'),
   (2, 'オライリージャパン')
+;

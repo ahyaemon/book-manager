@@ -4,4 +4,4 @@ CREATE TABLE book (
   author_id INTEGER NOT NULL REFERENCES author(id),
   publisher_id INTEGER NOT NULL REFERENCES publisher(id),
   PRIMARY KEY (id)
-)
+);
