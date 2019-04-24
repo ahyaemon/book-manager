@@ -3,9 +3,9 @@ package com.iijima.bookmanager.domain
 import com.iijima.bookmanager.domain.entity.Author
 import com.iijima.bookmanager.domain.entity.Book
 import com.iijima.bookmanager.domain.entity.Publisher
-import com.iijima.bookmanager.infra.AuthorRepository
-import com.iijima.bookmanager.infra.BookRepository
-import com.iijima.bookmanager.infra.PublisherRepository
+import com.iijima.bookmanager.infra.repository.AuthorRepository
+import com.iijima.bookmanager.infra.repository.BookRepository
+import com.iijima.bookmanager.infra.repository.PublisherRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

@@ -1,4 +1,4 @@
-package com.iijima.bookmanager.infra
+package com.iijima.bookmanager.infra.repository
 
 import com.iijima.bookmanager.domain.entity.Author
 import com.iijima.bookmanager.infra.dao.AuthorDao
