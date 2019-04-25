@@ -4,6 +4,7 @@ import com.iijima.bookmanager.domain.entity.Author
 import com.iijima.bookmanager.domain.entity.Book
 import com.iijima.bookmanager.domain.entity.Publisher
 import com.iijima.bookmanager.infra.entity.BookRecord
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.runner.RunWith
 import org.seasar.doma.boot.autoconfigure.DomaAutoConfiguration
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -13,8 +14,6 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit4.SpringRunner
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.core.Is.`is`
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -40,9 +39,9 @@ class BookDaoTest {
         val bookSummaries = bookDao.selectBookSummaries()
 
         val bookSummary = bookSummaries.first{ it.id == 1 }
-        assertThat(bookSummary.title, `is`("testbook1"))
-        assertThat(bookSummary.authorName, `is`("testman1"))
-        assertThat(bookSummary.publisherName, `is`("testpublisher1"))
+        assertThat(bookSummary.title).isEqualTo("testbook1")
+        assertThat(bookSummary.authorName).isEqualTo("testman1")
+        assertThat(bookSummary.publisherName).isEqualTo("testpublisher1")
     }
 
     @Test
@@ -50,22 +49,22 @@ class BookDaoTest {
         val bookSummaries1 =
                 bookDao.selectBookSummariesBy(null, null, null)
         val bookSummary1 = bookSummaries1.first{ it.id == 1 }
-        assertThat(bookSummary1.title, `is`("testbook1"))
+        assertThat(bookSummary1.title).isEqualTo("testbook1")
 
         val bookSummaries2 =
                 bookDao.selectBookSummariesBy("testbook1", null, null)
         val bookSummary2 = bookSummaries2.first{ it.id == 1 }
-        assertThat(bookSummary2.title, `is`("testbook1"))
+        assertThat(bookSummary2.title).isEqualTo("testbook1")
 
         val bookSummaries3 =
                 bookDao.selectBookSummariesBy(null, 2, null)
         val bookSummary3 = bookSummaries3.first{ it.id == 2 }
-        assertThat(bookSummary3.title, `is`("testbook2"))
+        assertThat(bookSummary3.title).isEqualTo("testbook2")
 
         val bookSummaries4 =
                 bookDao.selectBookSummariesBy(null, null, 2)
         val bookSummary4 = bookSummaries4.first{ it.id == 2 }
-        assertThat(bookSummary4.title, `is`("testbook2"))
+        assertThat(bookSummary4.title).isEqualTo("testbook2")
     }
 
     @Test
@@ -75,19 +74,19 @@ class BookDaoTest {
         val publisher1 = Publisher(1, "testpublisher1")
         val book1 = Book(1, "testbook1", author1, publisher1)
         val count1 = bookDao.countSameBook(book1)
-        assertThat(count1, `is`(0))
+        assertThat(count1).isEqualTo(0)
 
         val author2 = Author(1, "testman1")
         val publisher2 = Publisher(1, "testpublisher1")
         val book2 = Book(2, "testbook1", author2, publisher2)
         val count2 = bookDao.countSameBook(book2)
-        assertThat(count2, `is`(1))
+        assertThat(count2).isEqualTo(1)
 
         val author3 = Author(999, "xxx")
         val publisher3 = Publisher(999, "xxx")
         val book3 = Book(999, "xxx", author3, publisher3)
         val count3 = bookDao.countSameBook(book3)
-        assertThat(count3, `is`(0))
+        assertThat(count3).isEqualTo(0)
     }
 
     @Test
@@ -96,7 +95,7 @@ class BookDaoTest {
         bookDao.insert(bookRecord)
 
         val actual = bookDao.selectBookSummaries().first{ it.title == "testbook3"}
-        assertThat(actual.id, `is`(1001))
+        assertThat(actual.id).isEqualTo(1001)
     }
 
     @Test
@@ -105,9 +104,9 @@ class BookDaoTest {
         bookDao.update(bookRecord)
 
         val actual = bookDao.selectBookSummaries().first{ it.id == 1}
-        assertThat(actual.title, `is`("testbook_updated"))
-        assertThat(actual.authorId, `is`(2))
-        assertThat(actual.publisherId, `is`(2))
+        assertThat(actual.title).isEqualTo("testbook_updated")
+        assertThat(actual.authorId).isEqualTo(2)
+        assertThat(actual.publisherId).isEqualTo(2)
     }
 
     @Test
@@ -115,7 +114,7 @@ class BookDaoTest {
         bookDao.delete(1)
         val bookSummaries =
                 bookDao.selectBookSummariesBy("testbook1", null, null)
-        assertThat(bookSummaries.size, `is`(0))
+        assertThat(bookSummaries.size).isEqualTo(0)
     }
 
 }

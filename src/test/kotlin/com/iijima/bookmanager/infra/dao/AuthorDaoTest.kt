@@ -1,6 +1,7 @@
 package com.iijima.bookmanager.infra.dao
 
 import com.iijima.bookmanager.infra.entity.AuthorRecord
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.runner.RunWith
 import org.seasar.doma.boot.autoconfigure.DomaAutoConfiguration
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -10,8 +11,6 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit4.SpringRunner
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.core.Is.`is`
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -33,10 +32,10 @@ class AuthorDaoTest {
     @Test
     fun select() {
         val authorRecords = authorDao.select()
-        assertThat(authorRecords.size, `is`(2))
+        assertThat(authorRecords.size).isEqualTo(2)
 
         val authorRecord1 = authorRecords.first{ it.id == 1 }
-        assertThat(authorRecord1.name, `is`("testman1"))
+        assertThat(authorRecord1.name).isEqualTo("testman1")
     }
 
     @Test
@@ -45,7 +44,7 @@ class AuthorDaoTest {
         authorDao.insert(record)
 
         val actual = authorDao.select().first{ it.name == "testman3" }
-        assertThat(actual.id, `is`(1001))
+        assertThat(actual.id).isEqualTo(1001)
 
     }
 
