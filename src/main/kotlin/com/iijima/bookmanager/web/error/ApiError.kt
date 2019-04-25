@@ -7,10 +7,4 @@ class ApiError (
         val message: String?
 ) {
 
-    companion object {
-        fun fromFieldError(error: FieldError): ApiError {
-            return ApiError(error.field, error.defaultMessage)
-        }
-    }
-
 }
