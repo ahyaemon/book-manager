@@ -1,11 +1,21 @@
 package com.iijima.bookmanager.infra.entity;
 
-import com.iijima.bookmanager.domain.entity.Book;
 import org.seasar.doma.Column;
 import org.seasar.doma.Entity;
 
 @Entity
 public class BookSummary {
+
+    public BookSummary() {}
+
+    public BookSummary(Integer id, String title, Integer authorId, String authorName, Integer publisherId, String publisherName) {
+        this.id = id;
+        this.title = title;
+        this.authorId = authorId;
+        this.authorName = authorName;
+        this.publisherId = publisherId;
+        this.publisherName = publisherName;
+    }
 
     @Column(name = "id")
     public Integer id;

@@ -1,6 +1,5 @@
 package com.iijima.bookmanager.infra.repository
 
-import com.iijima.bookmanager.domain.entity.Author
 import com.iijima.bookmanager.domain.entity.Publisher
 import com.iijima.bookmanager.infra.dao.PublisherDao
 import com.iijima.bookmanager.infra.entity.PublisherRecord
