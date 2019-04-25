@@ -9,13 +9,11 @@ import javax.sql.DataSource
 @RestController
 @RequestMapping("/api/db")
 class DbController (
-        private val dataSource: DataSource
+        private val flyway: Flyway
 ) {
 
     @PostMapping("/init")
     fun init() {
-        val flyway = Flyway.configure().load()
-        flyway.dataSource = dataSource
         flyway.clean()
         flyway.migrate()
     }

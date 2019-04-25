@@ -4,6 +4,7 @@ import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.FlywayException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import javax.sql.DataSource
 
@@ -22,9 +23,7 @@ class FlywayConfig (
      */
     @Autowired
     fun initDB(){
-        Flyway.configure().dataSource(dataSource)
-        val flyway = Flyway.configure().load()
-        flyway.dataSource = dataSource
+        val flyway = flyway()
         if (!flyway.updated()) {
             logger.info("Skipping flyway clean and migration.")
             return
@@ -32,6 +31,13 @@ class FlywayConfig (
 
         flyway.clean()
         flyway.migrate()
+    }
+
+    @Bean
+    fun flyway(): Flyway {
+        val flyway = Flyway.configure().load()
+        flyway.dataSource = dataSource
+        return flyway
     }
 
     private fun Flyway.updated(): Boolean{
