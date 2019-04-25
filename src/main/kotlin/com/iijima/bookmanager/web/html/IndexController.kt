@@ -9,7 +9,7 @@ class IndexController {
 
     @RequestMapping
     fun index(): String {
-        return "index.html"
+        return "index"
     }
 
 }
