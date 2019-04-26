@@ -13,7 +13,7 @@ class SelfAccessJob: Job {
     /**
      * heroku を落とさないために自分自身にアクセスする Job。
      */
-    override fun execute(context: JobExecutionContext){
+    override fun execute(context: JobExecutionContext) {
         val url = URL("https://iijima-book-manager-1234567890.herokuapp.com/")
         val con = url.openConnection() as HttpURLConnection
         con.requestMethod = "GET"
